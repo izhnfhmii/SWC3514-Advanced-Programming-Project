@@ -1,0 +1,79 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.awt.*;
+
+public class StudentsD474 {
+
+    public static void main(String[] args) {
+
+        System.out.println("==========================================");
+        System.out.println("        STUDENT MANAGEMENT SYSTEM         ");
+        System.out.println("               StudentsD474               ");
+        System.out.println("==========================================\n");
+    
+        // Load existing students from file
+        ArrayList<Students> studentList = StudentsFile.loadStudents();
+    
+        // ✅ MOVE THIS DOWN (after loading)
+        System.out.println("\nWelcome to StudentsD474 System. Please insert the student data.\n");
+    
+        Scanner scanner = new Scanner(System.in);
+
+        try {
+            // Displaying the output for details
+            System.out.print("Please enter your full name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Enter your age: ");
+            int age = scanner.nextInt();
+            scanner.nextLine(); // Clear the buffer
+
+            System.out.print("Where are you from? : ");
+            String location = scanner.nextLine();
+
+            System.out.print("Which course have you applied for? : ");
+            String course = scanner.nextLine();
+
+            System.out.print("Enter your participant year(s): ");
+            int year = scanner.nextInt();
+
+            // Check for any kind of duplicate
+            boolean isDuplicate = false;
+            for (Students student : studentList) {
+                if (student.getName().equalsIgnoreCase(name)) {
+                    isDuplicate = true;
+                    break;
+                }
+            }
+
+            if (isDuplicate) {
+                throw new DuplicateStudentException("This student already exists in the system!");
+            }
+
+            // Adding the list for students
+            Students newStudent = new Students(name, age, location, course, year);
+            studentList.add(newStudent);
+
+            // Displaying the student data after has been collect
+            System.out.println("\n------------------- Current Student List -------------------");
+            for (Students student : studentList) {
+                student.print();
+                System.out.println("------------------------------------------------------------");
+            }
+
+            // For saving the data
+            StudentsFile.saveStudents(studentList);
+            StudentsFile.writeTextFile(studentList);
+
+        } catch (InvalidAgeException e) {
+            System.out.println("Error: Invalid age! " + e.getMessage());
+        } catch (DuplicateStudentException e) {
+            System.out.println("Error: Duplicate student! " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        } finally {
+            System.out.println("Thank you for using the Student Management System. Program ended.");
+            scanner.close();
+        }
+    }
+}
