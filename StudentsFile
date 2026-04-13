@@ -1,0 +1,73 @@
+import java.io.*;
+import java.util.ArrayList;
+
+public class StudentsFile {
+
+    // ------------------ Save Students (Serialization) ------------------
+    public static void saveStudents(ArrayList<Students> studentsList) {
+        try (ObjectOutputStream out = new ObjectOutputStream(
+                new BufferedOutputStream(new FileOutputStream("students.dat")))) {
+
+            out.writeObject(studentsList);
+            System.out.println("Students data has been saved successfully!");
+
+        } catch (IOException e) {
+            System.out.println("Error saving students: " + e.getMessage());
+        }
+    }
+
+    // ------------------ Load Students (Serialization) ------------------
+    public static ArrayList<Students> loadStudents() {
+        ArrayList<Students> studentsList = new ArrayList<>();
+
+        try (ObjectInputStream in = new ObjectInputStream(
+                new BufferedInputStream(new FileInputStream("students.dat")))) {
+
+            studentsList = (ArrayList<Students>) in.readObject();
+            System.out.println("Students data has been loaded successfully!");
+
+        } catch (FileNotFoundException e) {
+            System.out.println("No previous data found. Starting with an empty list.");
+        } catch (Exception e) {
+            System.out.println("Error loading students: " + e.getMessage());
+        }
+
+        return studentsList;
+    }
+
+    // ------------------ Write Text File in Box/Table Format ------------------
+    public static void writeTextFile(ArrayList<Students> studentsList) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("studentsData.txt"))) {
+
+            // --- Header ---
+            writer.write("--------------------------------------------------------------------------------");
+            writer.newLine();
+            writer.write(String.format("| %-5s | %-15s | %-3s | %-12s | %-12s | %-4s |",
+                    "ID", "Name", "Age", "Location", "Course", "Year"));
+            writer.newLine();
+            writer.write("--------------------------------------------------------------------------------");
+            writer.newLine();
+
+            // --- Data ---
+            for (Students s : studentsList) {
+                writer.write(String.format("| %-5d | %-15s | %-3d | %-12s | %-12s | %-4d |",
+                        s.getId(),
+                        s.getName(),
+                        s.getAge(),
+                        s.getLocation(),
+                        s.getCourse(),
+                        s.getYear()));
+                writer.newLine();
+            }
+
+            // --- Footer ---
+            writer.write("--------------------------------------------------------------------------------");
+            writer.newLine();
+
+            System.out.println("✅ Text data file has been written in table format! Check 'studentsData.txt'.");
+
+        } catch (IOException e) {
+            System.out.println("Error writing text file: " + e.getMessage());
+        }
+    }
+}
